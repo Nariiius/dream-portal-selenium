@@ -1,0 +1,6 @@
+target/
+allure-results/
+allure-report/
+.env
+.DS_Store
+*.pdf
