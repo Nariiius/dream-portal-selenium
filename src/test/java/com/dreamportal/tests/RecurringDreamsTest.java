@@ -1,5 +1,8 @@
 package com.dreamportal.tests;
 
+import com.dreamportal.pages.DreamsDiaryPage;
+import com.dreamportal.pages.DreamsTotalPage;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,11 +36,11 @@ public class RecurringDreamsTest {
 
     @Test
     void recurringDreamsLogicMatchesSummary() {
-        // counting how often each dream name appears in the diary
-        driver.get("https://arjitnigam.github.io/myDreams/dreams-diary.html");
+        DreamsDiaryPage diaryPage = new DreamsDiaryPage(driver);
+        diaryPage.open();
+
         Map<String, Integer> nameCounts = new HashMap<>();
-        List<WebElement> diaryRows = driver.findElements(By.xpath("//table[@id='dreamsDiary']/tbody/tr"));
-        for (WebElement row : diaryRows) {
+        for (WebElement row : diaryPage.getRows()) {
             List<WebElement> cells = row.findElements(By.tagName("td"));
             String name = cells.get(0).getText();
             nameCounts.put(name, nameCounts.getOrDefault(name, 0) + 1);
@@ -50,15 +53,10 @@ public class RecurringDreamsTest {
             }
         }
 
-        // checking the dreams total page for the count
-        driver.get("https://arjitnigam.github.io/myDreams/dreams-total.html");
-        Map<String, String> stats = new HashMap<>();
-        List<WebElement> summaryRows = driver.findElements(By.xpath("//table[@id='dreamsTotal']/tbody/tr"));
-        for (WebElement row : summaryRows) {
-            List<WebElement> cells = row.findElements(By.tagName("td"));
-            stats.put(cells.get(0).getText(), cells.get(1).getText());
-        }
-        int summaryRecurring = Integer.parseInt(stats.get("Recurring Dreams"));
+        DreamsTotalPage totalPage = new DreamsTotalPage(driver);
+        totalPage.open();
+
+        int summaryRecurring = totalPage.getRecurringCount();
 
         assertEquals(recurring, summaryRecurring, "Recurring computed from diary (" + recurring + ") should match summary (" + summaryRecurring + ")");
     }

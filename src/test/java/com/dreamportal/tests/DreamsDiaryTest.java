@@ -1,5 +1,7 @@
 package com.dreamportal.tests;
 
+import com.dreamportal.pages.DreamsDiaryPage;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,11 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DreamsDiaryTest {
 
     private WebDriver driver;
+    private DreamsDiaryPage diaryPage;
 
     @BeforeEach
     void setUp() {
         driver = new ChromeDriver();
-        driver.get("https://arjitnigam.github.io/myDreams/dreams-diary.html");
+        diaryPage = new DreamsDiaryPage(driver);
+        diaryPage.open();
     }
 
     @AfterEach
@@ -32,11 +36,9 @@ public class DreamsDiaryTest {
 
     @Test
     void diaryHasValidEntries() {
-        List<WebElement> rows = driver.findElements(By.xpath("//table[@id='dreamsDiary']/tbody/tr"));
+        assertEquals(10, diaryPage.getRowCount(), "Expected 10 rows, but found " + diaryPage.getRowCount());
 
-        assertEquals(10, rows.size(), "Expected 10 rows, but found " + rows.size());
-
-        for (WebElement row : rows) {
+        for (WebElement row : diaryPage.getRows()) {
 
             List<WebElement> cells = row.findElements(By.tagName("td"));
             assertEquals(3, cells.size(), "Expected 3 cells, but found " + cells.size());

@@ -1,67 +1,72 @@
 package com.dreamportal.tests;
 
+import com.dreamportal.pages.HomePage;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HomePageTest {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    private HomePage homePage;
 
     @BeforeEach
     void setUp() {
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.get("https://arjitnigam.github.io/myDreams/");
+        homePage = new HomePage(new ChromeDriver());
+        homePage.open();
     }
 
     @AfterEach
     void tearDown() {
-        if (driver != null) {
-            driver.quit();
+        if (homePage.getDriver() != null) {
+            homePage.getDriver().quit();
         }
     }
 
     @Test
     void loadingAnimationAppearsThenDisappears() {
 
-        assertTrue(driver.findElement(By.id("loadingAnimation")).isDisplayed(),
-                "Loading animation should be visible on load");
+        assertTrue(homePage.isLoadingAnimationVisible(), "Loading animation should be visible on load");
 
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("loadingAnimation")));
+        homePage.waitForLoadingAnimationToDisappear();
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("mainContent")));
+        homePage.waitForMainContent();
 
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("dreamButton")));
+        homePage.waitForDreamButton();
     }
 
     @Test
     void myDreamsButtonOpensTwoTabs() {
-        String original = driver.getWindowHandle();
+        String original = homePage.getDriver().getWindowHandle();
 
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("dreamButton"))).click();
-        wait.until(ExpectedConditions.numberOfWindowsToBe(3));
+        homePage.clickMyDreams();
 
-        for (String handle : driver.getWindowHandles()) {
+        homePage.waitForTwoNewWindows();
+
+        boolean sawDiary = false;
+        boolean sawTotal = false;
+        for (String handle : homePage.getDriver().getWindowHandles()) {
             if (handle.equals(original)) {
                 continue;
             }
 
-            driver.switchTo().window(handle);
+            homePage.getDriver().switchTo().window(handle);
 
-            assertTrue(driver.getCurrentUrl().contains("dreams-diary") || driver.getCurrentUrl().contains("dreams-total"),
-                "Unexpected URL in new tab: " + driver.getCurrentUrl());
+            if (homePage.isPage1()) {
+                sawDiary = true;
+            }
+
+            if (homePage.isPage2()) {
+                sawTotal = true;
+            }
         }
+
+        assertTrue(sawDiary, "No dreams-diary tab was opened");
+
+        assertTrue(sawTotal, "No dreams-total tab was opened");
     }
 }
