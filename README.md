@@ -21,6 +21,8 @@ JUnit 5 and Maven**, structured with the **Page Object Model**, reported via
   contain no raw selectors.
 - **Allure reporting** — interactive HTML report; a screenshot is attached
   automatically when a test fails.
+- **Structured logging** — SLF4J 2 + Log4j2 logging configured to output real-time
+  execution logs to the console and to `target/logs/test.log`.
 - **AI validation (bonus)** — each dream name is classified by an AI model and
   compared against the table. Uses the free `nvidia/nemotron-3.5-lightning:free`
   model through OpenRouter's OpenAI-compatible API (no vendor SDK — Java's
@@ -37,6 +39,7 @@ JUnit 5 and Maven**, structured with the **Page Object Model**, reported via
 | Selenium | 4.25.0 (Selenium Manager auto-downloads the matching chromedriver) |
 | Test framework | JUnit 5 (Jupiter 5.10.2) |
 | Reporting | Allure (allure-junit5 2.29.0 + Allure CLI) |
+| Logging | SLF4J 2.0.13 + Log4j2 2.23.1 (console & file appenders) |
 | JSON | org.json (for the AI response) |
 
 ---
@@ -103,6 +106,8 @@ mvn test
 dream-portal-selenium/
 ├── pom.xml
 ├── env.example                  # copy to .env and fill in the key
+└── src/test/resources/
+    └── log4j2.xml               # Log4j2 configuration (console & file)
 └── src/test/java/com/dreamportal/
     ├── pages/                   # Page Object Model
     │   ├── HomePage.java
@@ -130,7 +135,7 @@ dream-portal-selenium/
 | `myDreamsButtonOpensTwoTabs` | "My Dreams" opens both dreams-diary and dreams-total as distinct tabs |
 | `diaryHasValidEntries` | exactly 10 entries; 3 filled columns; types only Good/Bad |
 | `summaryStatsAreCorrect` | Good 6, Bad 4, Total 10, Dreams This Week 7, Recurring 2 |
-| `recurringDreamsLogicMatchesSummary` | recurring count recomputed from diary data matches the summary |
+| `recurringDreamsLogicMatchesSummary` | validates "Flying over mountains" & "Lost in maze" recur (>1) in diary and matches summary count |
 | `aiClassifiesEveryDreamSameAsTable` | AI classification of every dream name matches the table |
 
 ---
@@ -145,6 +150,13 @@ dream-portal-selenium/
   `chat/completions` API, so it can point at any compatible provider by changing
   `BASE_URL` and `MODEL` in `AiClassifier.java`.
 - **Graceful skip** — without a key, the test is reported as *skipped*, not failed.
+
+---
+
+## Logging
+
+- Test and page lifecycle events are logged via **SLF4J / Log4j2**.
+- Logs are printed to the console in real-time and also persisted to **`target/logs/test.log`**.
 
 ---
 
