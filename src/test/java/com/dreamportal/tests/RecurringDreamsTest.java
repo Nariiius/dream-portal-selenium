@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RecurringDreamsTest {
 
@@ -57,6 +58,9 @@ public class RecurringDreamsTest {
                 recurring++;
             }
         }
+
+        assertTrue(nameCounts.getOrDefault("Flying over mountains", 0) > 1, "Flying over mountains should appear more than once");
+        assertTrue(nameCounts.getOrDefault("Lost in maze", 0) > 1, "Lost in maze should appear more than once");
 
         DreamsTotalPage totalPage = new DreamsTotalPage(driver);
         totalPage.open();

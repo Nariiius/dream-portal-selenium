@@ -2,6 +2,8 @@ package com.dreamportal.ai;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -21,6 +23,7 @@ public class AiClassifier {
     private static final String MODEL = "nvidia/nemotron-3.5-lightning:free";
 
     private static final HttpClient HTTP = HttpClient.newHttpClient();
+    private static final Logger log = LoggerFactory.getLogger(AiClassifier.class);
 
     public Map<String, String> classify(String[] dreamNames) {
         String apiKey = Env.get("OPENROUTER_API_KEY");
@@ -48,6 +51,8 @@ public class AiClassifier {
                     .put("content", dreamNamesJson)));
 
         try {
+            log.info("Classifying {} dreams via AI", uniqueList.size());
+
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(BASE_URL))
                     .header("Authorization", "Bearer " + apiKey)
@@ -89,7 +94,8 @@ public class AiClassifier {
             }
             return result;
         } catch (Exception e) {
-            throw new RuntimeException("AI call failed:", e);
+            log.error("AI call failed", e);
+            throw new RuntimeException("AI call failed", e);
         }
     }
 }

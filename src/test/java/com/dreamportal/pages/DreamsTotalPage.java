@@ -3,6 +3,8 @@ package com.dreamportal.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Map;
 public class DreamsTotalPage {
 
     private final WebDriver driver;
+    private static final Logger log = LoggerFactory.getLogger(DreamsTotalPage.class);
 
     private final By tableRows = By.xpath("//table[@id='dreamsTotal']/tbody/tr");
 
@@ -19,6 +22,7 @@ public class DreamsTotalPage {
     }
 
     public void open() {
+        log.info("Opening dreams summary");
         driver.get("https://arjitnigam.github.io/myDreams/dreams-total.html");
     }
 
