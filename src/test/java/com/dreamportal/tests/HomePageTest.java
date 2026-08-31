@@ -6,6 +6,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.RegisterExtension;
+
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,6 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HomePageTest {
 
     private HomePage homePage;
+
+    @RegisterExtension
+    ScreenshotOnFailure screenshotOnFailure = new ScreenshotOnFailure(() -> homePage.getDriver());
 
     @BeforeEach
     void setUp() {

@@ -6,6 +6,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.extension.RegisterExtension;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -17,6 +19,9 @@ public class DreamsTotalTest {
 
     private WebDriver driver;
     private DreamsTotalPage totalPage;
+
+    @RegisterExtension
+    ScreenshotOnFailure screenshotOnFailure = new ScreenshotOnFailure(() -> driver);
 
     @BeforeEach
     void setUp() {
