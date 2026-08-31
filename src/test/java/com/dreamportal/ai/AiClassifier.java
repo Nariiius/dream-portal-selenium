@@ -4,10 +4,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URI;
-import java.net.http.*;
-
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 
 public class AiClassifier {
@@ -63,10 +68,14 @@ public class AiClassifier {
                     .getString("content");
 
             JSONArray arr;
-            if (content.trim().startsWith("[")) {
-                arr = new JSONArray(content);
-            } else {
-                arr = new JSONObject(content).getJSONArray("classification");
+            try {
+                if (content.trim().startsWith("[")) {
+                    arr = new JSONArray(content);
+                } else {
+                    arr = new JSONObject(content).getJSONArray("classification");
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Could not parse model output. Raw content was: " + content, e);
             }
 
             if (arr.length() != uniqueList.size()) {
